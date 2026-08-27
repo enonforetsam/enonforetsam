@@ -5,9 +5,28 @@ import gifos
 
 USER = "enonforetsam"
 
+# figlet "banner3" font, ASCII-only (the bitmap font is latin-1, no unicode block glyphs)
+BANNER = [
+    r"##     ##    ###     ######  ######## ######## ########      #######  ########",
+    r"###   ###   ## ##   ##    ##    ##    ##       ##     ##    ##     ## ##",
+    r"#### ####  ##   ##  ##          ##    ##       ##     ##    ##     ## ##",
+    r"## ### ## ##     ##  ######     ##    ######   ########     ##     ## ######",
+    r"##     ## #########       ##    ##    ##       ##   ##      ##     ## ##",
+    r"##     ## ##     ## ##    ##    ##    ##       ##    ##     ##     ## ##",
+    r"##     ## ##     ##  ######     ##    ######## ##     ##     #######  ##",
+    r"",
+    r"##    ##  #######  ##    ## ########",
+    r"###   ## ##     ## ###   ## ##",
+    r"####  ## ##     ## ####  ## ##",
+    r"## ## ## ##     ## ## ## ## ######",
+    r"##  #### ##     ## ##  #### ##",
+    r"##   ### ##     ## ##   ### ##",
+    r"##    ##  #######  ##    ## ########",
+]
+
 
 def main():
-    t = gifos.Terminal(750, 420, 15, 15, font_size=15)
+    t = gifos.Terminal(750, 500, 15, 15, font_size=15)
 
     # --- fake BIOS boot ---
     t.gen_text("", 1, count=15)
@@ -62,12 +81,18 @@ def main():
     )
     t.gen_text(f"Last login: {time_now} on tty1", 6)
 
-    t.gen_prompt(7, count=4)
+    # MOTD: block-letter banner, rows 8-18
+    for i, line in enumerate(BANNER):
+        t.gen_text(f"\x1b[95m{line}\x1b[0m", 8 + i, count=0)
+    t.gen_text("", 8, count=6, contin=True)
+
+    prompt_row = 8 + len(BANNER) + 1
+    t.gen_prompt(prompt_row, count=4)
     prompt_col = t.curr_col
     t.toggle_show_cursor(True)
-    t.gen_typing_text("\x1b[91mclea", 7, contin=True)
-    t.delete_row(7, prompt_col)
-    t.gen_text("\x1b[92mclear\x1b[0m", 7, count=2, contin=True)
+    t.gen_typing_text("\x1b[91mclea", prompt_row, contin=True)
+    t.delete_row(prompt_row, prompt_col)
+    t.gen_text("\x1b[92mclear\x1b[0m", prompt_row, count=2, contin=True)
 
     # --- fetch real GitHub stats ---
     git = gifos.utils.fetch_github_stats(USER)
