@@ -28,7 +28,6 @@ jobs:
       - name: Generate terminal gif
         run: python main.py
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIFOS_GENERAL_COLOR_SCHEME: "dracula"
           GIFOS_GENERAL_LOOP_COUNT: 0
           GIFOS_GENERAL_USER_NAME: "enonforetsam"
