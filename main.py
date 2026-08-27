@@ -25,7 +25,7 @@ import gifos  # noqa: E402  (must come after the env overrides)
 
 from art import compose  # noqa: E402
 
-COLS, ROWS = 80, 42
+COLS, ROWS = 106, 30  # ~878x570px: fills GitHub's README column at 1:1, no downscale
 # terminal px = cols*8 + 2*xpad, rows*18 + 2*ypad (gohufont 14 = 8x14 + 4 line spacing)
 WIDTH, HEIGHT = COLS * 8 + 30, ROWS * 18 + 30
 FPS = 15

@@ -13,7 +13,13 @@ WORD = "MASTER"
 SUB = "OF NONE"
 WORD_FONT = "isometric1"
 SUB_FONT = "small"
-STEP_X, STEP_Y = 11, 4  # per-letter diagonal step (right, up)
+STEP_X, STEP_Y = 13, 2  # per-letter diagonal step (right, up); flat enough for a 30-row landscape
+INFO = [
+    "enonforetsam",
+    "kuala lumpur, my",
+    "themasterofnone.xyz",
+    "krackeddevs.com",
+]
 
 
 def _figlet_lines(text, font):
@@ -118,7 +124,7 @@ def compose(cols, rows):
     total_h = letter_h + STEP_Y * (n - 1)
     total_w = STEP_X * (n - 1) + max(max(len(x) for x in l) for l in letters)
     word_top = (rows - total_h) // 2 - 1
-    word_left = (cols - total_w) // 2 + 1
+    word_left = lft + 8  # anchored left; the right third is for the signature block
     for i, lines in enumerate(letters):
         t = word_top + STEP_Y * (n - 1 - i)
         l = word_left + STEP_X * i
@@ -130,6 +136,13 @@ def compose(cols, rows):
     sub_top = word_top + total_h - len(sub) + 1
     sub_left = cols - 5 - sub_w
     _blit(grid, sub, sub_top, sub_left, "sub", halo=1)
+
+    # --- small info block stacked above OF NONE, sharing its right edge ---
+    info_w = max(len(s) for s in INFO)
+    info_left = sub_left + sub_w - info_w
+    info_top = sub_top - len(INFO) - 1
+    for i, s in enumerate(INFO):
+        _blit(grid, [s.rjust(info_w)], info_top + i, info_left, "tag", halo=1, keep_spaces=True)
 
     # --- footer tags set into the bottom edge, like the reference's ".xxxx: 1981" ---
     tag_l = " enonforetsam "
@@ -147,6 +160,6 @@ def to_plain(grid):
 if __name__ == "__main__":
     import sys
 
-    cols = int(sys.argv[1]) if len(sys.argv) > 1 else 76
-    rows = int(sys.argv[2]) if len(sys.argv) > 2 else 42
+    cols = int(sys.argv[1]) if len(sys.argv) > 1 else 106
+    rows = int(sys.argv[2]) if len(sys.argv) > 2 else 30
     print(to_plain(compose(cols, rows)))
