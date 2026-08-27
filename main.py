@@ -1,11 +1,9 @@
-"""Profile README gif: a demoscene-style ANSI-art piece (see art.py) revealed
-top-to-bottom like a BBS download, then held. Plays ONCE, no loop.
-
-Output is a single static screen; nothing ever clears.
+"""Profile README gif: a demoscene-style ANSI-art piece (see art.py). The word,
+frame and text are static; the dot-texture field around them drifts downward
+with parallax, as a seamless infinite loop.
 """
 
 import os
-import subprocess
 
 # gifos reads its palette from env at import time (GIFOS_<SCHEME>_<GROUP>_<KEY>).
 # Start from dracula and override to a near-black, restrained palette:
@@ -23,12 +21,12 @@ for k, v in PALETTE.items():
 
 import gifos  # noqa: E402  (must come after the env overrides)
 
-from art import compose  # noqa: E402
+from art import LOOP_FRAMES, animate_texture, compose  # noqa: E402
 
 COLS, ROWS = 106, 30  # ~878x570px: fills GitHub's README column at 1:1, no downscale
 # terminal px = cols*8 + 2*xpad, rows*18 + 2*ypad (gohufont 14 = 8x14 + 4 line spacing)
 WIDTH, HEIGHT = COLS * 8 + 30, ROWS * 18 + 30
-FPS = 15
+FPS = 12  # 32-frame loop -> ~2.7s per cycle
 
 # class -> ANSI code (see PALETTE for what each code resolves to)
 COLOR = {
@@ -58,33 +56,22 @@ def row_to_ansi(row):
 
 
 def main():
-    grid = compose(COLS, ROWS)
+    base = compose(COLS, ROWS)
     t = gifos.Terminal(WIDTH, HEIGHT, 15, 15, font_size=15)
     t.set_fps(FPS)
     t.toggle_show_cursor(False)
     t.toggle_blink_cursor(False)
 
-    # short black hold, then the piece loads one row per frame
-    t.gen_text("", 1, count=6)
-    for r, row in enumerate(grid):
-        t.gen_text(row_to_ansi(row), r + 1, count=1)
-    # hold on the finished piece
-    t.gen_text("", ROWS, count=20, contin=True)
+    # one full redraw per frame; only the texture cells differ between frames
+    for f in range(LOOP_FRAMES):
+        t.clear_frame()
+        for r, row in enumerate(animate_texture(base, f)):
+            t.gen_text(row_to_ansi(row), r + 1, count=0)
+        t.gen_text("", ROWS, count=1, contin=True)  # emit the frame
 
-    # gen_gif() ignores loop_count and always loops forever; re-encode from the
-    # same frames with -loop -1 so the gif plays once and holds the last frame.
+    # gen_gif() always writes an infinitely looping gif, which is what an
+    # ambient animation wants. The 32-frame cycle is seamless (see art.py).
     t.gen_gif()
-    subprocess.run(
-        [
-            "ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
-            "-r", str(FPS), "-i", "frames/frame_%d.png",
-            "-filter_complex", "[0:v] split [a][b];[a] palettegen [p];[b][p] paletteuse",
-            "-loop", "-1",
-            "output.gif",
-        ],
-        check=True,
-    )
-    print("INFO: output.gif re-encoded with -loop -1 (play once, hold last frame)")
 
 
 if __name__ == "__main__":

@@ -153,6 +153,35 @@ def compose(cols, rows):
     return grid
 
 
+# --- animation: the texture field drifts downward like rain, with parallax ---
+# Each texture column scrolls an 8-row pattern at one of three speeds. The loop
+# is seamless when every column returns to its start: LCM(8*1, 8*2, 8*4) = 32.
+PERIOD = 8
+PATTERN = [":", "'", ".", " ", ":", " ", ".", " "]          # even columns (dense)
+PATTERN_SPARSE = [".", " ", " ", " ", " ", ":", " ", " "]   # odd columns (the centre layer)
+SPEEDS = (1, 2, 4)  # frames per one-row step
+LOOP_FRAMES = PERIOD * max(SPEEDS)
+
+
+def animate_texture(base, frame):
+    """Return a copy of `base` with every 'tex' cell's glyph re-derived for
+    `frame`. Only cells that are texture in the base grid ever change, so the
+    word, frame, text and the halos around them stay put."""
+    rows, cols = len(base), len(base[0])
+    out = [row[:] for row in base]
+    for c in range(cols):
+        k = SPEEDS[_hash(3, c) % len(SPEEDS)]
+        phase = _hash(4, c) % PERIOD
+        pat = PATTERN if c % 2 == 0 else PATTERN_SPARSE
+        off = frame // k
+        for r in range(rows):
+            if base[r][c][1] != "tex":
+                continue
+            ch = pat[(r - off + phase) % PERIOD]
+            out[r][c] = (ch, "tex") if ch != " " else (" ", "bg")
+    return out
+
+
 def to_plain(grid):
     return "\n".join("".join(ch for ch, _ in row).rstrip() for row in grid)
 
