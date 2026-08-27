@@ -1,75 +1,60 @@
-"""Single-screen terminal gif for the profile README.
+"""Profile README gif: a demoscene-style ANSI-art piece (see art.py) revealed
+top-to-bottom like a BBS download, then held. Plays ONCE, no loop.
 
-One tty, nothing ever clears: the login lines type in, the MASTER OF NONE
-block banner loads line by line, the prompt types a sign-off, and the gif
-plays ONCE and holds on that final frame (no loop).
+Output is a single static screen; nothing ever clears.
 """
 
 import subprocess
-from datetime import datetime
-from zoneinfo import ZoneInfo
 
 import gifos
 
-USER = "enonforetsam"
+from art import compose
 
-# figlet "banner3" font, ASCII-only (the bitmap font is latin-1, no unicode block glyphs)
-BANNER = [
-    r"##     ##    ###     ######  ######## ######## ########      #######  ########",
-    r"###   ###   ## ##   ##    ##    ##    ##       ##     ##    ##     ## ##",
-    r"#### ####  ##   ##  ##          ##    ##       ##     ##    ##     ## ##",
-    r"## ### ## ##     ##  ######     ##    ######   ########     ##     ## ######",
-    r"##     ## #########       ##    ##    ##       ##   ##      ##     ## ##",
-    r"##     ## ##     ## ##    ##    ##    ##       ##    ##     ##     ## ##",
-    r"##     ## ##     ##  ######     ##    ######## ##     ##     #######  ##",
-    r"",
-    r"##    ##  #######  ##    ## ########",
-    r"###   ## ##     ## ###   ## ##",
-    r"####  ## ##     ## ####  ## ##",
-    r"## ## ## ##     ## ## ## ## ######",
-    r"##  #### ##     ## ##  #### ##",
-    r"##   ### ##     ## ##   ### ##",
-    r"##    ##  #######  ##    ## ########",
-]
+COLS, ROWS = 80, 42
+# terminal px = cols*8 + 2*xpad, rows*18 + 2*ypad (gohufont 14 = 8x14 + 4 line spacing)
+WIDTH, HEIGHT = COLS * 8 + 30, ROWS * 18 + 30
+FPS = 15
+
+# dracula-ish ANSI roles
+COLOR = {
+    "bg": "0",
+    "frame": "97",   # bright white
+    "tex": "37",     # grey (#BFBFBF in dracula)
+    "word": "95",    # pink
+    "sub": "96",     # cyan
+    "tag": "93",     # yellow
+}
+
+
+def row_to_ansi(row):
+    """Serialize one grid row into a string with inline colour codes, one code
+    per run of same-class cells."""
+    out, cur = [], None
+    for ch, cls in row:
+        if cls == "bg":
+            out.append(ch)
+            continue
+        if cls != cur:
+            out.append(f"\x1b[{COLOR[cls]}m")
+            cur = cls
+        out.append(ch)
+    out.append("\x1b[0m")
+    return "".join(out).rstrip()
 
 
 def main():
-    t = gifos.Terminal(750, 500, 15, 15, font_size=15)
-    now = datetime.now(ZoneInfo("Asia/Kuala_Lumpur"))
-    time_now = now.strftime("%a %b %d %I:%M:%S %p %Z %Y")
-
-    # header + login
+    grid = compose(COLS, ROWS)
+    t = gifos.Terminal(WIDTH, HEIGHT, 15, 15, font_size=15)
+    t.set_fps(FPS)
     t.toggle_show_cursor(False)
-    t.gen_text("\x1b[93mTHE MASTER LAB v1.0 (tty1)\x1b[0m", 1, count=6)
-    t.gen_text("login: ", 3, count=4)
-    t.toggle_show_cursor(True)
-    t.gen_typing_text(USER, 3, contin=True)
-    t.gen_text("", 3, count=4, contin=True)
-    t.toggle_show_cursor(False)
-    t.gen_text("password: ", 4, count=4)
-    t.toggle_show_cursor(True)
-    t.gen_typing_text("*********", 4, contin=True)
-    t.gen_text("", 4, count=4, contin=True)
-    t.toggle_show_cursor(False)
-    t.gen_text(f"Last login: {time_now} on tty1", 6, count=6)
-
-    # banner loads one row per frame
-    banner_top = 8
-    for i, line in enumerate(BANNER):
-        t.gen_text(f"\x1b[95m{line}\x1b[0m", banner_top + i, count=1)
-    t.gen_text("", banner_top + len(BANNER) - 1, count=8, contin=True)
-
-    # prompt + sign-off, then hold
-    prompt_row = banner_top + len(BANNER) + 1
-    t.gen_prompt(prompt_row, count=4)
-    t.toggle_show_cursor(True)
-    t.gen_typing_text(
-        "\x1b[92m# jack of all trades, master of none. built in Kuala Lumpur.",
-        prompt_row,
-        contin=True,
-    )
     t.toggle_blink_cursor(False)
-    t.gen_text("", prompt_row, count=12, contin=True)
+
+    # short black hold, then the piece loads one row per frame
+    t.gen_text("", 1, count=6)
+    for r, row in enumerate(grid):
+        t.gen_text(row_to_ansi(row), r + 1, count=1)
+    # hold on the finished piece
+    t.gen_text("", ROWS, count=20, contin=True)
 
     # gen_gif() ignores loop_count and always loops forever; re-encode from the
     # same frames with -loop -1 so the gif plays once and holds the last frame.
@@ -77,7 +62,7 @@ def main():
     subprocess.run(
         [
             "ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
-            "-r", "15", "-i", "frames/frame_%d.png",
+            "-r", str(FPS), "-i", "frames/frame_%d.png",
             "-filter_complex", "[0:v] split [a][b];[a] palettegen [p];[b][p] paletteuse",
             "-loop", "-1",
             "output.gif",

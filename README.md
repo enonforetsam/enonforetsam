@@ -6,7 +6,7 @@
     <img alt="enonforetsam terminal" src="./output.gif">
 </picture>
 
-<sub><i>terminal generated with <a href="https://github.com/x0rzavi/github-readme-terminal">github-readme-terminal</a>, auto-refreshed daily</i></sub>
+<sub><i>ansi art rendered with <a href="https://github.com/x0rzavi/github-readme-terminal">github-readme-terminal</a></i></sub>
 
 **jack of all trades, master of none** — *oftentimes better than master of one*
 
