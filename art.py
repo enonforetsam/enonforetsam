@@ -67,13 +67,24 @@ def compose(cols, rows):
         if c % 2:
             continue
         dist = abs(c - cols / 2) / (cols / 2)  # 0 centre .. 1 edge
-        span = half * (1.0 - 0.45 * dist * dist)  # shallow lens: corners still get texture
+        span = half * (1.0 - 0.3 * dist * dist)  # shallow lens: corners still get texture
         jit_top, jit_bot = _hash(1, c) % 5, _hash(2, c) % 5
         r0 = max(3, int(mid - span) + jit_top)
         r1 = min(rows - 4, int(mid + span) - jit_bot)
         for r in range(r0, r1 + 1):
             ch = ":" if (r + c // 2) % 2 == 0 else "'"
             grid[r][c] = (ch, "tex")
+    # second, sparser layer on the odd columns through the middle band so the
+    # centre packs tighter than the edges (reference has a dense core)
+    for c in range(7, cols - 7):
+        if c % 2 == 0:
+            continue
+        dist = abs(c - cols / 2) / (cols / 2)
+        if dist > 0.6:
+            continue
+        for r in range(6, rows - 6):
+            if (r + _hash(0, c)) % 3 == 0:
+                grid[r][c] = (".", "tex")
 
     # --- frame: chamfered box + X chain inside left/right edges ---
     top, bot, lft, rgt = 0, rows - 1, 0, cols - 1
@@ -96,6 +107,9 @@ def compose(cols, rows):
             continue
         grid[r][lft + 2] = ("X", "frame")
         grid[r][rgt - 2] = ("X", "frame")
+    # X-chain block hugging the top-left inside corner, like the reference's
+    # ",XXXXXXXXXXXX:" header ornament
+    _blit(grid, [",xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx:", "xxxxxxxxxxxxxxxxxxx::"], top + 2, lft + 3, "frame", halo=1)
 
     # --- the word, stair-stepped up and to the right; later letters sit in front ---
     letters = [_figlet_lines(ch, WORD_FONT) for ch in WORD]

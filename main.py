@@ -4,25 +4,40 @@ top-to-bottom like a BBS download, then held. Plays ONCE, no loop.
 Output is a single static screen; nothing ever clears.
 """
 
+import os
 import subprocess
 
-import gifos
+# gifos reads its palette from env at import time (GIFOS_<SCHEME>_<GROUP>_<KEY>).
+# Start from dracula and override to a near-black, restrained palette:
+# black bg, two greys, white, one pink accent.
+PALETTE = {
+    "GIFOS_GENERAL_COLOR_SCHEME": "dracula",
+    "GIFOS_DRACULA_DEFAULT_COLORS_BG": "#050507",
+    "GIFOS_DRACULA_DEFAULT_COLORS_FG": "#f2f2f4",   # 39: sub text
+    "GIFOS_DRACULA_NORMAL_COLORS_WHITE": "#5a5a66",  # 37: texture (dim)
+    "GIFOS_DRACULA_BRIGHT_COLORS_WHITE": "#a6a6b2",  # 97: frame + tags
+    "GIFOS_DRACULA_BRIGHT_COLORS_MAGENTA": "#ff79c6",  # 95: the word
+}
+for k, v in PALETTE.items():
+    os.environ[k] = v
 
-from art import compose
+import gifos  # noqa: E402  (must come after the env overrides)
+
+from art import compose  # noqa: E402
 
 COLS, ROWS = 80, 42
 # terminal px = cols*8 + 2*xpad, rows*18 + 2*ypad (gohufont 14 = 8x14 + 4 line spacing)
 WIDTH, HEIGHT = COLS * 8 + 30, ROWS * 18 + 30
 FPS = 15
 
-# dracula-ish ANSI roles
+# class -> ANSI code (see PALETTE for what each code resolves to)
 COLOR = {
     "bg": "0",
-    "frame": "97",   # bright white
-    "tex": "37",     # grey (#BFBFBF in dracula)
-    "word": "95",    # pink
-    "sub": "96",     # cyan
-    "tag": "93",     # yellow
+    "frame": "97",
+    "tex": "37",
+    "word": "95",
+    "sub": "39",
+    "tag": "97",
 }
 
 
