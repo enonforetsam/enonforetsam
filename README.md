@@ -30,11 +30,9 @@ RULE  — if it renders on the visitor's device, there's nothing to outgrow
 | | what it is | live |
 |---|---|---|
 | **Fluid** | WebGL generative-art instrument — design backgrounds, wallpapers & OG images, export or embed live | [fluid.krackeddevs.com](https://fluid.krackeddevs.com) |
-| **mybitduit** | non-custodial crypto "money terminal" — never holds your funds | [mybitduit.com](https://mybitduit.com) |
-| **Peta Malaysia** | interactive SVG map of Malaysia — 16 states, 159 districts, themeable, on npm | [map.themasterofnone.xyz](https://map.themasterofnone.xyz) |
+| **Mapz** | interactive SVG map of Malaysia — 16 states, 159 districts, themeable, on npm | [map.themasterofnone.xyz](https://map.themasterofnone.xyz) |
 | **Pasar API** | a directory of *every API in Malaysia* — gov, free & commercial | [pasarapi.krackeddevs.com](https://pasarapi.krackeddevs.com) |
 | **qrdurian** | QR codes that don't look like QR codes — ink engine, shuffleable themes | [qrdurian.com](https://qrdurian.com) |
-| **Toolkit** | a submittable, monetizable marketplace for builder tools | [toolkit.krackeddevs.com](https://toolkit.krackeddevs.com) |
 | **the studio** | mercury-glass portfolio — six hexagons on a shader | [themasterofnone.xyz](https://themasterofnone.xyz) |
 
 ### ▍What I reach for
