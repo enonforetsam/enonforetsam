@@ -30,7 +30,7 @@ RULE  — if it renders on the visitor's device, there's nothing to outgrow
 | | what it is | live |
 |---|---|---|
 | **Fluid** | WebGL generative-art instrument — design backgrounds, wallpapers & OG images, export or embed live | [fluid.krackeddevs.com](https://fluid.krackeddevs.com) |
-| **Mapz** | interactive SVG map of Malaysia — 16 states, 159 districts, themeable, on npm | [map.themasterofnone.xyz](https://map.themasterofnone.xyz) |
+| **Mapz** | interactive SVG atlas of the whole world — every country down to states & districts, themeable, on npm | [map.themasterofnone.xyz](https://map.themasterofnone.xyz) |
 | **Pasar API** | a directory of *every API in Malaysia* — gov, free & commercial | [pasarapi.krackeddevs.com](https://pasarapi.krackeddevs.com) |
 | **qrdurian** | QR codes that don't look like QR codes — ink engine, shuffleable themes | [qrdurian.com](https://qrdurian.com) |
 | **the studio** | mercury-glass portfolio — six hexagons on a shader | [themasterofnone.xyz](https://themasterofnone.xyz) |
