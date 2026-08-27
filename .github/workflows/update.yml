@@ -1,0 +1,44 @@
+name: Update terminal gif
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  update-gif:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+          python -m pip install --upgrade pip
+          pip install github-readme-terminal
+
+      - name: Generate terminal gif
+        run: python main.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIFOS_GENERAL_COLOR_SCHEME: "dracula"
+          GIFOS_GENERAL_LOOP_COUNT: 0
+          GIFOS_GENERAL_USER_NAME: "enonforetsam"
+
+      - name: Commit and push
+        run: |
+          if git diff --quiet -- output.gif; then
+            echo "No change to output.gif, skipping commit"
+            exit 0
+          fi
+          git add output.gif
+          git -c "user.name=github-actions[bot]" -c "user.email=github-actions[bot]@users.noreply.github.com" commit -m "chore: auto-refresh terminal gif"
+          git push
