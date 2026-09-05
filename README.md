@@ -17,8 +17,9 @@
 
 ---
 
-I build small, fast, useful things — generative art, Malaysia-first tools, crypto terminals, pixel worlds.
-One-file when it can be, zero-backend when it should be, shipped the same day. Most of it lives under **[KrackedDevs](https://krackeddevs.com)**.
+Founder of **[KrackedDevs](https://krackeddevs.com)** — Malaysia's AI builder community; by day, AI software and training for organisations and governments.
+By night, small, fast, useful things — generative art, Malaysia-first tools, crypto terminals, pixel worlds.
+One-file when it can be, zero-backend when it should be, shipped the same day. The canonical list lives on **[themasterofnone.xyz](https://themasterofnone.xyz)**.
 
 ```
 STATE — building in public, one experiment at a time
@@ -33,7 +34,9 @@ RULE  — if it renders on the visitor's device, there's nothing to outgrow
 | **Mapz** | interactive SVG atlas of the whole world — every country down to states & districts, themeable, on npm | [map.themasterofnone.xyz](https://map.themasterofnone.xyz) |
 | **Pasar API** | a directory of *every API in Malaysia* — gov, free & commercial | [pasarapi.krackeddevs.com](https://pasarapi.krackeddevs.com) |
 | **qrdurian** | QR codes that don't look like QR codes — ink engine, shuffleable themes | [qrdurian.com](https://qrdurian.com) |
-| **the studio** | mercury-glass portfolio — six hexagons on a shader | [themasterofnone.xyz](https://themasterofnone.xyz) |
+| **ASCII** | Fluid's text-native sibling — the same generative engines rendered as characters on a CRT | [ascii.krackeddevs.com](https://ascii.krackeddevs.com) |
+| **Nostalgia OS** | this portfolio's first life — a Windows 95 desktop you can boot, with a guestbook | [nostalgia.themasterofnone.xyz](https://nostalgia.themasterofnone.xyz) |
+| **the studio** | the portfolio — six hexagons on a live Fluid wallpaper, each one a project sheet | [themasterofnone.xyz](https://themasterofnone.xyz) |
 
 ### ▍What I reach for
 
